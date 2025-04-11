@@ -1,33 +1,56 @@
 import { useEffect, useState } from 'react';
-import { getUsers } from '../api';
+import { getUsers, createUser, updateUser, deleteUser } from '../api';
+import UserForm from '../components/UserForm';
+import UserList from '../components/UserList';
 
-function Dashboard() {
+export default function Dashboard({ token }) {
   const [users, setUsers] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
+
+  const fetchUsers = async () => {
+    try {
+      const data = await getUsers(token);
+      console.log("Usuarios desde la API:", data); // <--- AÑADE ESTA LÍNEA
+      setUsers(data.users || data); 
+    } catch (error) {
+      console.error("Error al obtener usuarios:", error); // <--- PARA VER ERRORES DE LA API
+    }
+  };
+  
 
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Asegúrate de que existe
-    if (!token) {
-      console.error("No hay token");
-      return;
-    }
-
-    getUsers(token)
-      .then(setUsers)
-      .catch((err) => {
-        console.error("Error al obtener usuarios:", err);
-      });
+    console.log("Token recibido:", token); // <--- AÑADE ESTA LÍNEA
+    fetchUsers();
   }, []);
+  
+
+  const handleCreate = async (userData) => {
+    await createUser(userData, token);
+    fetchUsers();
+  };
+
+  const handleUpdate = async (userData) => {
+    await updateUser(editingUser.id, userData, token);
+    setEditingUser(null);
+    fetchUsers();
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Estás seguro de eliminar este usuario?')) {
+      await deleteUser(id, token);
+      fetchUsers();
+    }
+  };
 
   return (
     <div>
-      <h1>Usuarios</h1>
-      <ul>
-        {users.map(user => (
-          <li key={user.id}>{user.name} - {user.email}</li>
-        ))}
-      </ul>
+      <h2>Dashboard</h2>
+      <UserForm
+        onSubmit={editingUser ? handleUpdate : handleCreate}
+        initialData={editingUser}
+        isEditing={!!editingUser}
+      />
+      <UserList users={users} onEdit={setEditingUser} onDelete={handleDelete} />
     </div>
   );
 }
-
-export default Dashboard;
