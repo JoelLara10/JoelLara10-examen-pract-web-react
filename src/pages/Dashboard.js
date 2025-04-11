@@ -1,48 +1,33 @@
 import { useEffect, useState } from 'react';
-import { getUsers, createUser, updateUser, deleteUser } from '../api';
-import UserForm from '../components/UserForm';
-import UserList from '../components/UserList';
+import { getUsers } from '../api';
 
-export default function Dashboard({ token }) {
+function Dashboard() {
   const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
-
-  const fetchUsers = async () => {
-    const data = await getUsers(token);
-    setUsers(data.users || data);
-  };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleCreate = async (userData) => {
-    await createUser(userData, token);
-    fetchUsers();
-  };
-
-  const handleUpdate = async (userData) => {
-    await updateUser(editingUser.id, userData, token);
-    setEditingUser(null);
-    fetchUsers();
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar este usuario?')) {
-      await deleteUser(id, token);
-      fetchUsers();
+    const token = localStorage.getItem('token'); // Asegúrate de que existe
+    if (!token) {
+      console.error("No hay token");
+      return;
     }
-  };
+
+    getUsers(token)
+      .then(setUsers)
+      .catch((err) => {
+        console.error("Error al obtener usuarios:", err);
+      });
+  }, []);
 
   return (
     <div>
-      <h2>Dashboard</h2>
-      <UserForm
-        onSubmit={editingUser ? handleUpdate : handleCreate}
-        initialData={editingUser}
-        isEditing={!!editingUser}
-      />
-      <UserList users={users} onEdit={setEditingUser} onDelete={handleDelete} />
+      <h1>Usuarios</h1>
+      <ul>
+        {users.map(user => (
+          <li key={user.id}>{user.name} - {user.email}</li>
+        ))}
+      </ul>
     </div>
   );
 }
+
+export default Dashboard;
