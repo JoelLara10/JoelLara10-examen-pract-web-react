@@ -31,12 +31,50 @@ export default function UserForm({ onSubmit, initialData = {}, isEditing }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h3>{isEditing ? 'Editar usuario' : 'Crear usuario'}</h3>
-      <input name="name" value={form.name} onChange={handleChange} placeholder="Nombre" required />
-      <input name="email" value={form.email} onChange={handleChange} placeholder="Email" required />
-      <input name="password" value={form.password} onChange={handleChange} placeholder="Password" type="password" required={!isEditing} />
-      <button type="submit">{isEditing ? 'Actualizar' : 'Crear'}</button>
+    <form onSubmit={handleSubmit} className="card p-4 shadow-sm mb-4">
+      <h3 className="mb-4 text-center">{isEditing ? 'Editar usuario' : 'Crear usuario'}</h3>
+
+      <div className="mb-3">
+        <label htmlFor="name" className="form-label">Nombre</label>
+        <input
+          id="name"
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="Nombre"
+          className="form-control"
+          required
+        />
+      </div>
+
+      <div className="mb-3">
+        <label htmlFor="email" className="form-label">Email</label>
+        <input
+          id="email"
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+          placeholder="Email"
+          className="form-control"
+          required
+        />
+      </div>
+
+      <div className="mb-3">
+        <label htmlFor="password" className="form-label">Contraseña</label>
+        <input
+          id="password"
+          name="password"
+          value={form.password}
+          onChange={handleChange}
+          placeholder="Contraseña"
+          type="password"
+          className="form-control"
+          required={!isEditing}
+        />
+      </div>
+
+      <button type="submit" className="btn btn-primary w-100">{isEditing ? 'Actualizar' : 'Crear'}</button>
     </form>
   );
 }

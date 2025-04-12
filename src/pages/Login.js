@@ -11,7 +11,7 @@ export default function Login({ onLogin }) {
       const { token } = await login(email, password);
       if (!token) throw new Error("Token vacío");
       localStorage.setItem('token', token);
-      onLogin(token); // <- Esto hace que App muestre el Dashboard
+      onLogin(token);
       alert('Login exitoso');
     } catch (err) {
       console.error(err);
@@ -20,23 +20,35 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div className="container mt-5 d-flex justify-content-center">
+      <div className="card p-4 shadow" style={{ maxWidth: '400px', width: '100%' }}>
+        <h2 className="text-center mb-4">Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              placeholder="Ingresa tu email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Contraseña</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Ingresa tu contraseña"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">Iniciar sesión</button>
+        </form>
+      </div>
+    </div>
   );
 }
